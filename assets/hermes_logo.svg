@@ -1,0 +1,22 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Retro Pixelated Background for Hermes -->
+  <rect width="1024" height="1024" rx="225" fill="#1A1A1A"/>
+  
+  <!-- Winged Helmet Icon (Hermes Symbol) in Pixel Style -->
+  <path d="M300 400 L724 400 L724 600 C724 700 600 800 512 800 C424 800 300 700 300 600 Z" fill="url(#hermes_grad)" />
+  
+  <!-- "Wings" -->
+  <path d="M250 350 L400 350 L400 450 L250 450 Z" fill="#FFD700" />
+  <path d="M624 350 L774 350 L774 450 L624 450 Z" fill="#FFD700" />
+  
+  <!-- Pixel Detail -->
+  <rect x="480" y="450" width="60" height="60" fill="white" opacity="0.5" />
+  <rect x="540" y="510" width="60" height="60" fill="white" opacity="0.3" />
+
+  <defs>
+    <linearGradient id="hermes_grad" x1="512" y1="400" x2="512" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD700"/>
+      <stop offset="1" stop-color="#FF8C00"/>
+    </linearGradient>
+  </defs>
+</svg>
