@@ -26,20 +26,22 @@
     <section class="layout">
       <article class="device iphone">
         <div class="device-head">
-          <h2>iPhone Inbox</h2>
-          <label class="toggle">
-            <input id="urgentToggle" type="checkbox" />
-            <span>Urgent only</span>
-          </label>
+          <h2>iPhone Screenshots</h2>
+          <div class="screenshot-nav">
+            <button id="prevBtn" class="nav-btn">←</button>
+            <span id="slideCounter">1 / 6</span>
+            <button id="nextBtn" class="nav-btn">→</button>
+          </div>
         </div>
-
-        <ul id="messageList" class="messages"></ul>
+        <div class="screenshot-gallery">
+          <img id="screenshotImg" src="screenshot_1.png" alt="iPhone Screenshot" class="screenshot" />
+        </div>
       </article>
 
       <article class="device watch">
         <div class="watch-display">
           <h2>Apple Watch UI</h2>
-          <img src="../assets/watchos-ui-openclaw.png" alt="OpenClaw Bridge Apple Watch UI Design" class="watch-image" />
+          <img src="watchos-ui-openclaw.png" alt="OpenClaw Bridge Apple Watch UI Design" class="watch-image" />
         </div>
       </article>
     </section>

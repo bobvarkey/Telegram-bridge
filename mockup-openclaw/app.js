@@ -1,32 +1,24 @@
-const messages = [
-  { chat: 'Dev Team', sender: 'Alex', body: 'Standup in 10 min', priority: 'work' },
-  { chat: 'Family', sender: 'Sam', body: 'Dinner at 7?', priority: 'personal' },
-  { chat: 'Ops', sender: 'Bot', body: 'Latency spike detected', priority: 'urgent' },
-  { chat: 'Trading Desk', sender: 'Leah', body: 'NQ levels updated', priority: 'work' }
-];
+const screenshotImg = document.getElementById('screenshotImg');
+const slideCounter = document.getElementById('slideCounter');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
 
-const list = document.getElementById('messageList');
-const watchList = document.getElementById('watchList');
-const urgentToggle = document.getElementById('urgentToggle');
+const totalScreenshots = 6;
+let currentSlide = 1;
 
-function render() {
-  const showUrgentOnly = urgentToggle.checked;
-  const filtered = showUrgentOnly ? messages.filter((m) => m.priority === 'urgent') : messages;
-
-  list.innerHTML = filtered.map((m) => `
-    <li class="msg">
-      <div class="top">
-        <span class="chat">${m.chat}</span>
-        <span class="pill ${m.priority}">${m.priority.toUpperCase()}</span>
-      </div>
-      <div class="body">${m.sender}: ${m.body}</div>
-    </li>
-  `).join('');
-
-  watchList.innerHTML = filtered.slice(0, 3).map((m) => `
-    <li><b>${m.chat}</b><span>${m.body}</span></li>
-  `).join('');
+function updateSlide() {
+  screenshotImg.src = `screenshot_${currentSlide}.png`;
+  slideCounter.textContent = `${currentSlide} / ${totalScreenshots}`;
 }
 
-urgentToggle.addEventListener('change', render);
-render();
+prevBtn.addEventListener('click', () => {
+  currentSlide = currentSlide === 1 ? totalScreenshots : currentSlide - 1;
+  updateSlide();
+});
+
+nextBtn.addEventListener('click', () => {
+  currentSlide = currentSlide === totalScreenshots ? 1 : currentSlide + 1;
+  updateSlide();
+});
+
+updateSlide();

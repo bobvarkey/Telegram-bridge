@@ -76,12 +76,33 @@ h1 { margin: .15rem 0; }
   gap: .75rem;
   margin-bottom: .75rem;
 }
-.toggle {
+.toggle, .screenshot-nav {
   font-size: .86rem;
   color: var(--muted);
   display: flex;
   align-items: center;
   gap: .4rem;
+}
+.screenshot-nav {
+  gap: .6rem;
+}
+.nav-btn {
+  background: #e0e5ed;
+  border: none;
+  padding: .4rem .6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--ink);
+  transition: background 0.2s;
+}
+.nav-btn:hover {
+  background: #d0d8e5;
+}
+#slideCounter {
+  font-size: .8rem;
+  min-width: 4.5rem;
+  text-align: center;
 }
 
 .messages, .watch-messages {
@@ -90,6 +111,20 @@ h1 { margin: .15rem 0; }
   padding: 0;
   display: grid;
   gap: .6rem;
+}
+
+.screenshot-gallery {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+}
+.screenshot {
+  max-width: 100%;
+  max-height: 500px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .msg {
