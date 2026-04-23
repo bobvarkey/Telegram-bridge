@@ -2,7 +2,9 @@
 
 ## OpenClaw Watch Interface Concept
 
-**Design Reference:** Apple Watch with custom watchOS app interface
+![Apple Watch UI - OpenClaw Design](./assets/watchos-ui-openclaw.png)
+
+**Design Reference:** Apple Watch with custom watchOS app interface - OPENCLAW Edition
 
 ### Design Elements
 
