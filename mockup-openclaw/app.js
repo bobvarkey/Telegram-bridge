@@ -3,21 +3,22 @@ const slideCounter = document.getElementById('slideCounter');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 
-const totalScreenshots = 6;
-let currentSlide = 1;
+const screenshots = [1, 3, 4, 5, 6]; // Skip screenshot 2
+let currentIndex = 0;
 
 function updateSlide() {
-  screenshotImg.src = `screenshot_${currentSlide}.png`;
-  slideCounter.textContent = `${currentSlide} / ${totalScreenshots}`;
+  const slideNum = screenshots[currentIndex];
+  screenshotImg.src = `screenshot_${slideNum}.png`;
+  slideCounter.textContent = `${currentIndex + 1} / ${screenshots.length}`;
 }
 
 prevBtn.addEventListener('click', () => {
-  currentSlide = currentSlide === 1 ? totalScreenshots : currentSlide - 1;
+  currentIndex = currentIndex === 0 ? screenshots.length - 1 : currentIndex - 1;
   updateSlide();
 });
 
 nextBtn.addEventListener('click', () => {
-  currentSlide = currentSlide === totalScreenshots ? 1 : currentSlide + 1;
+  currentIndex = currentIndex === screenshots.length - 1 ? 0 : currentIndex + 1;
   updateSlide();
 });
 
