@@ -119,28 +119,31 @@ h1 { margin: .15rem 0; }
 .pill.urgent { color: #aa1616; background: #ffeaea; }
 
 .watch {
-  background: #101319;
-  color: #ecf1fa;
+  background: var(--card);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.watch-face {
-  border: 2px solid #2c3546;
-  border-radius: 28px;
-  padding: .85rem;
+.watch h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: var(--ink);
 }
-.watch h3 {
-  margin: 0 0 .6rem;
-  color: #b8f7ff;
-  font-size: .95rem;
-  letter-spacing: .04em;
+.watch-display {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
-.watch-messages li {
-  background: #1a2130;
-  border: 1px solid #2b3447;
-  border-radius: 10px;
-  padding: .55rem;
-  font-size: .8rem;
+.watch-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  object-fit: contain;
 }
-.watch-messages b { display: block; margin-bottom: .15rem; }
 
 footer { margin-top: 1rem; color: var(--muted); }
 
