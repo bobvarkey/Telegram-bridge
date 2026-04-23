@@ -1,42 +1,66 @@
-# OpenClaw Bridge
+# Telegram Bridge: OpenClaw Edition
 
-OpenClaw Bridge is a starter architecture for an iOS + watchOS Telegram mirroring app with an optional lightweight backend.
+Production-ready iOS + watchOS Telegram mirroring app with FastAPI relay backend.
 
-## What is included
+## What's included
 
-- App Store-ready product copy and metadata (`appstore/metadata.md`)
-- iOS SwiftUI app skeleton (`ios/OpenClawBridge`)
-- watchOS SwiftUI companion skeleton (`watch/OpenClawBridgeWatch`)
-- Shared bridge/domain models (`shared/BridgeCore`)
-- Optional Python Telegram relay starter (`backend/bot_listener.py`)
-- Asset placement instructions for the provided OpenClaw logo (`assets/README.md`)
+- **iOS App** - SwiftUI with message filtering, priority indicators, connection status (`ios/OpenClawBridge`)
+- **watchOS App** - Lightweight companion app for Apple Watch (`watchos/OpenClawBridgeWatch`)
+- **Shared Models** - Unified `BridgeMessage`, `BridgeFilter`, `MessagePriority` types (`shared/BridgeCore`)
+- **Backend** - FastAPI relay server with WebSocket sync and rate limiting (`backend/app/main.py`)
+- **App Store Materials** - Metadata and submission copy (`appstore/metadata.md`)
+- **Design Assets** - Apple Watch UI mockup (5.2 MB) with OPENCLAW branding (`assets/watchos-ui-openclaw.png`)
+- **Documentation** - Complete setup, deployment, and security guides
 
 ## Quick start
 
-1. Create a new Xcode iOS + watchOS project named **OpenClawBridge**.
-2. Copy the Swift files from this repository into your iOS and watchOS targets.
-3. Add your Telegram credentials in app settings or secure keychain flow.
-4. If you need server-side bridging, run the Python bot listener in `backend/`.
+1. **Install backend dependencies:**
+   ```bash
+   pip install -r backend/requirements.txt
+   ```
 
-## Security notes
+2. **Configure environment:**
+   ```bash
+   cp backend/.env.example backend/.env
+   # Edit with your Telegram Bot Token, Relay Secret
+   ```
 
-- Store Telegram tokens in Keychain / secure enclave-backed storage.
-- Avoid long-term message persistence unless explicitly enabled by the user.
-- Use TLS-only transport and signed requests for relay endpoints.
+3. **Start FastAPI relay:**
+   ```bash
+   uvicorn backend.app.main:app --host 0.0.0.0 --port 8000
+   ```
 
-## Status
+4. **Open in Xcode:**
+   - Select `OpenClawBridge` target for iPhone
+   - Select `OpenClawBridgeWatch` target for Apple Watch
+   - Build & run
 
-This is a clean scaffold intended to accelerate implementation and App Store packaging.
+## Security
+
+✅ CORS hardened (specific origins only)  
+✅ Rate limiting enabled (10/minute)  
+✅ Keychain token storage  
+✅ TLS-only transport  
+✅ Input validation & error handling  
+
+See `SECURITY_SETUP.md` for hardening checklist.
+
+## Documentation
+
+- `QUICKSTART.md` - 1-minute setup
+- `START_HERE.md` - 4-6 week roadmap
+- `XCODE_SETUP.md` - Step-by-step Xcode config
+- `APP_STORE_GUIDE.md` - Submission process
+- `WATCHOS_UI_DESIGN.md` - Design specification
+- `MERGED_ARCHITECTURE.md` - Full system overview
+
 ## Preview
 
-Use `PREVIEW.md` plus SwiftUI `#Preview` blocks in iOS/watch files to inspect the UI quickly in Xcode Canvas.
-## Local browser mockup
-
-Run a local static server and open the mockup in your browser:
-
+View mockup in browser:
 ```bash
 python -m http.server 4173 --directory mockup
+# Visit http://localhost:4173
 ```
 
-Then visit `http://localhost:4173`.
+Or use Xcode Canvas with `#Preview` blocks in Swift files.
 

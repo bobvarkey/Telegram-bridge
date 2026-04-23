@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct WatchMessageListView: View {
-    let messages: [WatchMessage]
+    let messages: [BridgeMessage]
 
     var body: some View {
         List(messages) { message in
@@ -24,17 +24,11 @@ struct WatchMessageListView: View {
     }
 }
 
-struct WatchMessage: Identifiable {
-    let id = UUID()
-    let chatTitle: String
-    let body: String
-}
-
 enum SampleWatchData {
-    static let messages: [WatchMessage] = [
-        WatchMessage(chatTitle: "Ops", body: "CPU alert: node 3"),
-        WatchMessage(chatTitle: "Family", body: "On our way home"),
-        WatchMessage(chatTitle: "Dev Team", body: "PR merged")
+    static let messages: [BridgeMessage] = [
+        BridgeMessage(chatTitle: "Ops", sender: "Bot", body: "CPU alert: node 3", priority: .urgent),
+        BridgeMessage(chatTitle: "Family", sender: "Sam", body: "On our way home", priority: .personal),
+        BridgeMessage(chatTitle: "Dev Team", sender: "Alex", body: "PR merged", priority: .work)
     ]
 }
 
