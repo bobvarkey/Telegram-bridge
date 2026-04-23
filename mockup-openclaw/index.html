@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenClaw Bridge — Local Browser Mockup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="logo-orb" aria-hidden="true">
+        <div class="eye"></div>
+        <div class="eye"></div>
+      </div>
+      <div>
+        <p class="eyebrow">OPENCLAW</p>
+        <h1>OpenClaw Bridge</h1>
+        <p class="sub">Telegram on your wrist. Instantly.</p>
+      </div>
+    </header>
+
+    <section class="layout">
+      <article class="device iphone">
+        <div class="device-head">
+          <h2>iPhone Inbox</h2>
+          <label class="toggle">
+            <input id="urgentToggle" type="checkbox" />
+            <span>Urgent only</span>
+          </label>
+        </div>
+
+        <ul id="messageList" class="messages"></ul>
+      </article>
+
+      <article class="device watch">
+        <div class="watch-face">
+          <h3>OPENCLAW</h3>
+          <ul id="watchList" class="watch-messages"></ul>
+        </div>
+      </article>
+    </section>
+
+    <footer>
+      <small>Local mockup only — no Telegram credentials required.</small>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
