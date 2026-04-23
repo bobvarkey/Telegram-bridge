@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Header, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Header, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -11,6 +11,8 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 import json
 import asyncio
+import hashlib
+import hmac
 
 load_dotenv()
 
@@ -95,11 +97,29 @@ async def send_message(msg: Message, x_relay_token: str = Header(None)):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/api/messages/{chat_id}")
-async def get_messages(chat_id: int, x_relay_token: str = Header(None)):
+async def get_messages(
+    chat_id: int,
+    limit: int = 10,
+    offset: int = 0,
+    x_relay_token: str = Header(None)
+):
     if x_relay_token != RELAY_SECRET:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    return {"chat_id": chat_id, "messages": []}
+    if limit < 1 or limit > 100:
+        limit = 10
+    if offset < 0:
+        offset = 0
+
+    logger.info(f"Fetching messages for chat {chat_id}, limit={limit}, offset={offset}")
+
+    return {
+        "chat_id": chat_id,
+        "messages": [],
+        "limit": limit,
+        "offset": offset,
+        "total": 0
+    }
 
 # FIX #4: Improve WebSocket error handling
 @app.websocket("/ws/sync/{device_id}")
@@ -149,9 +169,30 @@ async def websocket_endpoint(websocket: WebSocket, device_id: str):
             del connected_clients[device_id]
             logger.info(f"WebSocket client {device_id} removed from active clients")
 
+def verify_telegram_signature(body: str) -> bool:
+    """Verify that the webhook request came from Telegram using HMAC-SHA256."""
+    secret = hashlib.sha256(TELEGRAM_BOT_TOKEN.encode()).digest()
+    signature = hmac.new(secret, body.encode(), hashlib.sha256).hexdigest()
+    return signature == (os.getenv("X_TELEGRAM_BOT_API_SECRET_TOKEN", ""))
+
 @app.post("/webhook/telegram")
-async def telegram_webhook(update: dict):
+async def telegram_webhook(update: dict, request: Request):
     try:
+        body = await request.body()
+        body_str = body.decode() if isinstance(body, bytes) else body
+
+        telegram_signature = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
+        if not telegram_signature:
+            logger.warning("Webhook request missing X-Telegram-Bot-Api-Secret-Token header")
+            raise HTTPException(status_code=401, detail="Missing signature header")
+
+        secret = hashlib.sha256(TELEGRAM_BOT_TOKEN.encode()).digest()
+        expected_signature = hmac.new(secret, body_str.encode(), hashlib.sha256).hexdigest()
+
+        if not hmac.compare_digest(telegram_signature, expected_signature):
+            logger.warning("Invalid webhook signature - rejecting request")
+            raise HTTPException(status_code=401, detail="Invalid signature")
+
         if "message" in update:
             msg = update["message"]
             chat_id = msg.get("chat", {}).get("id")
@@ -189,15 +230,69 @@ async def telegram_webhook(update: dict):
         logger.error(f"Webhook error: {e}", exc_info=True)
         return {"ok": False, "error": str(e)}
 
+@app.post("/api/setup-webhook")
+async def setup_webhook(webhook_url: str, x_relay_token: str = Header(None)):
+    """Register webhook URL with Telegram Bot API."""
+    if x_relay_token != RELAY_SECRET:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    try:
+        secret_token = hashlib.sha256(TELEGRAM_BOT_TOKEN.encode()).hexdigest()
+
+        response = await bot.set_webhook(
+            url=webhook_url,
+            secret_token=secret_token,
+            allowed_updates=["message"]
+        )
+
+        logger.info(f"Webhook registered: {webhook_url}")
+
+        webhook_info = await bot.get_webhook_info()
+        return {
+            "status": "registered",
+            "webhook_url": webhook_info.url,
+            "has_custom_certificate": webhook_info.has_custom_certificate,
+            "pending_update_count": webhook_info.pending_update_count
+        }
+    except TelegramError as e:
+        logger.error(f"Failed to setup webhook: {e}")
+        raise HTTPException(status_code=400, detail=f"Telegram error: {str(e)}")
+    except Exception as e:
+        logger.error(f"Webhook setup error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Failed to setup webhook")
+
+@app.get("/api/webhook-status")
+async def webhook_status(x_relay_token: str = Header(None)):
+    """Check webhook registration status."""
+    if x_relay_token != RELAY_SECRET:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    try:
+        info = await bot.get_webhook_info()
+        return {
+            "registered": bool(info.url),
+            "webhook_url": info.url,
+            "has_custom_certificate": info.has_custom_certificate,
+            "pending_update_count": info.pending_update_count,
+            "last_error_date": info.last_error_date,
+            "last_error_message": info.last_error_message
+        }
+    except Exception as e:
+        logger.error(f"Webhook status check failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get webhook status")
+
 @app.get("/health")
 async def health():
     try:
         # Check Telegram Bot connectivity
         bot_user = await bot.get_me()
+        webhook_info = await bot.get_webhook_info()
+
         return {
             "status": "healthy",
             "bot_connected": True,
             "bot_username": bot_user.username,
+            "webhook_registered": bool(webhook_info.url),
             "active_clients": len(connected_clients)
         }
     except Exception as e:

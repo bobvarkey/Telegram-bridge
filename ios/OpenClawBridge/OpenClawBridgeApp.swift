@@ -2,13 +2,26 @@ import SwiftUI
 
 @main
 struct OpenClawBridgeApp: App {
-    @StateObject private var viewModel = MessageListViewModel(
-        bridgeService: MockBridgeService()
-    )
+    @State private var isSetupComplete = false
+    @State private var bridgeService: (any BridgeService)? = nil
+    @State private var viewModel: MessageListViewModel? = nil
 
     var body: some Scene {
         WindowGroup {
-            MessageListView(viewModel: viewModel)
+            if isSetupComplete, let viewModel {
+                MessageListView(viewModel: viewModel)
+            } else {
+                SetupView { botToken, backendURL, relaySecret in
+                    let service = BridgeServiceImpl(
+                        backendURL: backendURL,
+                        relayToken: relaySecret,
+                        chatID: 0
+                    )
+                    bridgeService = service
+                    self.viewModel = MessageListViewModel(bridgeService: service)
+                    isSetupComplete = true
+                }
+            }
         }
     }
 }

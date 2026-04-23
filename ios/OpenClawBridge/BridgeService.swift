@@ -2,6 +2,10 @@ import Foundation
 
 protocol BridgeService {
     func fetchMessages(filter: BridgeFilter) async throws -> [BridgeMessage]
+    func sendMessage(_ text: String) async throws
+    func connect(onMessage: @escaping ([BridgeMessage]) -> Void) async
+    func disconnect()
+    func setupWebhook(webhookURL: String) async throws
 }
 
 struct MockBridgeService: BridgeService {
@@ -29,4 +33,9 @@ struct MockBridgeService: BridgeService {
             return filter.keywords.contains { lowerBody.contains($0.lowercased()) }
         }
     }
+
+    func sendMessage(_ text: String) async throws {}
+    func connect(onMessage: @escaping ([BridgeMessage]) -> Void) async {}
+    func disconnect() {}
+    func setupWebhook(webhookURL: String) async throws {}
 }
